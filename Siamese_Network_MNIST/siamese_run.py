@@ -18,7 +18,7 @@ def train_model(model, dataset):
 
         train_loss = model.train_model(input_1=input_1, input_2=input_2, label=label)
 
-        if episode % 1000 == 0:
+        if episode % 100 == 0:
             print('episode %d: train loss %.3f' % (episode, train_loss))
 
         if episode % 10000 == 0:
