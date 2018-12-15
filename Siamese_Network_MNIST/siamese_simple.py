@@ -147,7 +147,7 @@ class Siamese(object):
         # AdamOptimizer and GradientDescentOptimizer has different effect on the final results
         # GradientDescentOptimizer is probably better than AdamOptimizer in Siamese Network
         # optimizer = tf.train.AdamOptimizer(LEARNING_RATE).minimize(self.loss)
-        optimizer = tf.train.AdadeltaOptimizer(LEARNING_RATE).minimize(self.loss)
+        optimizer = tf.train.GradientDescentOptimizer(LEARNING_RATE).minimize(self.loss)
         return optimizer
 
     def train_model(self, input_1, input_2, label):
