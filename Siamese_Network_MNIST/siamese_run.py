@@ -3,8 +3,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from siamese_simple import Siamese
 
-EPISODE_MAX = 50000
-BATCH_SIZE = 100
+EPISODE_MAX = 100000
+BATCH_SIZE = 128
 
 
 def train_model(model, dataset):
@@ -18,10 +18,10 @@ def train_model(model, dataset):
 
         train_loss = model.train_model(input_1=input_1, input_2=input_2, label=label)
 
-        if episode % 100 == 0:
+        if episode % 1000 == 0:
             print('episode %d: train loss %.3f' % (episode, train_loss))
 
-        if episode % 1000 == 0:
+        if episode % 10000 == 0:
             model.save_model()
 
 
