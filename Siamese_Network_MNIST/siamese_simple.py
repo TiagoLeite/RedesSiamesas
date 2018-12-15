@@ -70,19 +70,19 @@ class Siamese(object):
         reshaped = tf.reshape(input, shape=[-1, 28, 28, 1])
 
         w1 = tf.get_variable(shape=[5, 5, 1, 32], dtype=tf.float32, name='w1',
-                             initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
+                             initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
         b1 = tf.get_variable(shape=[32], dtype=tf.float32, name='b1',
-                             initializer=tf.constant_initializer(0.01))
+                             initializer=tf.constant_initializer(0.1))
 
         w2 = tf.get_variable(shape=[3, 3, 32, 64], dtype=tf.float32, name='w2',
-                             initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
+                             initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
         b2 = tf.get_variable(shape=[64], dtype=tf.float32, name='b2',
-                             initializer=tf.constant_initializer(0.01))
+                             initializer=tf.constant_initializer(0.1))
 
         w3 = tf.get_variable(shape=[3, 3, 64, 96], dtype=tf.float32, name='w3',
                              initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
         b3 = tf.get_variable(shape=[96], dtype=tf.float32, name='b3',
-                             initializer=tf.constant_initializer(0.01))
+                             initializer=tf.constant_initializer(0.1))
 
         conv1 = tf.nn.relu(tf.nn.conv2d(reshaped, w1, strides=[1, 1, 1, 1], padding='VALID') + b1)
 
