@@ -1,7 +1,5 @@
 from tensorflow.examples.tutorials.mnist import input_data
-import tensorflow as tf
-import matplotlib.pyplot as plt
-from siamese_simple import Siamese
+from Mnist.siamese_simple import Siamese
 
 EPISODE_MAX = 100000
 BATCH_SIZE = 128
