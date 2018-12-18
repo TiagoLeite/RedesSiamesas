@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 class Pair(object):
 
     def __init__(self, path_image_1, path_image_2, label):
-        self.image_1 = Image.open(path_image_1)
-        self.image_2 = Image.open(path_image_2)
+        self.image_1 = np.array(Image.open(path_image_1))
+        self.image_2 = np.array(Image.open(path_image_2))
         self.label = label
 
     def print_shapes(self):

@@ -1,9 +1,47 @@
 from tensorflow.examples.tutorials.mnist import input_data
 from siamese import Siamese
 from pair import Pair
+import os
+import glob
+import random
+
+random.seed(1997)
 
 EPISODE_MAX = 100000
 BATCH_SIZE = 128
+
+
+def get_all_pairs():
+    folders = glob.glob('train/*')
+    cont = 0
+    pair_count = 0
+    pairs = list()
+    print(len(folders))
+    for folder in folders:
+        cont += 1
+        files = os.listdir(folder)  # dir is your directory path
+        number_files = len(files)
+        print(folder, cont, number_files)
+        folders.remove(folder)
+        files = sorted(files)
+        print(files)
+        for k in range(len(files)):
+            file = files[k]
+            #print('Current:', file)
+            #print('Size:', len(files[k:]))
+            pair_count = 0
+            for another_file in files[k+1:]:
+                pair_count += 1
+                par = Pair(folder+'/'+file, folder+'/'+another_file, 1)
+                # print(file, another_file)
+                # par.print_shapes()
+                pairs.append(par)
+                if pair_count > 5:
+                    break
+            print(pair_count)
+        if cont >= 1:
+            break
+    print('Pairs:', len(pairs))
 
 
 def train_model(model, dataset):
@@ -36,13 +74,15 @@ def main():
     # Initialze model
     # siamese = Siamese()
     pairs = list()
-    for k in range(4):
-        apar = Pair('aug_test/' + str((k % 2)+1) + '.jpg', 'aug_test/' + str((k+1) % 2 + 1) + '.jpg', k % 2)
-        pairs.append(apar)
+    #for k in range(4):
+    #    apar = Pair('aug_test/' + str((k % 2) + 1) + '.jpg', 'aug_test/' + str((k + 1) % 2 + 1) + '.jpg', k % 2)
+    #    pairs.append(apar)
+    # print(len(pairs))
+    get_all_pairs()
 
-    for par in pairs:
-        par.print_label()
-        par.print_images()
+    # for par in pairs:
+    #    par.print_label()
+    #    par.print_images()
     # train_model(model=siamese, dataset=mnist)
     # test_model(model=siamese, dataset=mnist)
 
