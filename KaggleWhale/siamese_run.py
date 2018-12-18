@@ -1,9 +1,9 @@
 from tensorflow.examples.tutorials.mnist import input_data
-from siamese_simple import Siamese
-import numpy as np
+from siamese import Siamese
+from pair import Pair
 
 EPISODE_MAX = 100000
-BATCH_SIZE = 100
+BATCH_SIZE = 128
 
 
 def train_model(model, dataset):
@@ -13,13 +13,11 @@ def train_model(model, dataset):
         input_2, label_2 = dataset.train.next_batch(BATCH_SIZE)
         label = (label_1 == label_2).astype('float')
 
-        print(np.shape(input_1), np.shape(input_2), np.shape(label))
-
-        print(label)
+        # print(label)
 
         train_loss = model.train_model(input_1=input_1, input_2=input_2, label=label)
 
-        if episode % 25 == 0:
+        if episode % 100 == 0:
             print('episode %d: train loss %.3f' % (episode, train_loss))
 
         if episode % 10000 == 0:
@@ -34,13 +32,19 @@ def test_model(model, dataset):
 
 def main():
     # Load MNIST dataset
-    mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
+    # mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
     # Initialze model
-    siamese = Siamese()
-    # Train model
-    train_model(model=siamese, dataset=mnist)
-    # Test model
-    test_model(model=siamese, dataset=mnist)
+    # siamese = Siamese()
+    pairs = list()
+    for k in range(4):
+        apar = Pair('aug_test/' + str((k % 2)+1) + '.jpg', 'aug_test/' + str((k+1) % 2 + 1) + '.jpg', k % 2)
+        pairs.append(apar)
+
+    for par in pairs:
+        par.print_label()
+        par.print_images()
+    # train_model(model=siamese, dataset=mnist)
+    # test_model(model=siamese, dataset=mnist)
 
 
 if __name__ == '__main__':

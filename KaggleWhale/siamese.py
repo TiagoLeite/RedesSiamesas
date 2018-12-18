@@ -20,7 +20,7 @@ LEARNING_RATE = 0.01
 SAVE_PERIOD = 500
 MODEL_DIR = 'model/'  # path for saving the model
 MODEL_NAME = 'siamese_model'
-RAND_SEED = 0  # random seed
+RAND_SEED = 1990  # random seed
 tf.set_random_seed(RAND_SEED)
 
 
@@ -67,7 +67,7 @@ class Siamese(object):
 
     def network(self, input):
 
-        reshaped = tf.reshape(input, shape=[-1, 28, 28, 1])
+        reshaped = tf.reshape(input, shape=[-1, 224, 224, 3])
 
         w1 = tf.get_variable(shape=[5, 5, 1, 32], dtype=tf.float32, name='w1',
                              initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
@@ -96,7 +96,7 @@ class Siamese(object):
 
         pool3 = tf.nn.max_pool(conv3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
-        flatten = tf.reshape(pool3, [-1, pool3.get_shape()[1]*pool3.get_shape()[2]*64])
+        flatten = tf.reshape(pool3, [-1, pool3.get_shape()[1] * pool3.get_shape()[2] * 64])
 
         fc1 = self.fc_layer(tf_input=flatten, n_hidden_units=1024, variable_name='fc1')
         ac1 = tf.nn.relu(fc1)
@@ -104,7 +104,7 @@ class Siamese(object):
         fc2 = self.fc_layer(tf_input=ac1, n_hidden_units=512, variable_name='fc2')
         ac2 = tf.nn.relu(fc2)
 
-        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=32, variable_name='fc3')
+        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=128, variable_name='fc3')
         # ac3 = tf.nn.tanh(fc3)
 
         return fc3

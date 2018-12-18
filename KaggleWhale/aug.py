@@ -13,15 +13,27 @@ def augment(folder):
     # p.rotate(max_right_rotation=10, max_left_rotation=10, probability=0.75)
     p.resize(probability=1.0, width=224, height=224)
     p.set_seed(1998)
-    p.sample(10)
+    p.sample(100)
 
 
-folders = glob.glob('aug_test/*')
+folders = glob.glob('train/*')
+cont = 0
+less = 10000000
 for folder in folders:
-    print(folder)
-    augment(folder)
-    files = glob.glob(folder + "/output/*.jpg")
-    for file in files:
-        print(file)
-        shutil.move(file, folder)
-    os.system('cd ' + folder + ' && rm -rf output/ && ls | cat -n | while read n f; do mv "$f" "$n.jpg"; done')
+    cont += 1
+    list = os.listdir(folder)  # dir is your directory path
+    number_files = len(list)
+    if number_files < less:
+        less = number_files
+    if number_files < 100:
+        print(folder, number_files)
+        print('\n' + str(cont) + ' \n')
+
+    #augment(folder)
+    #files = glob.glob(folder + "/output/*.jpg")
+    #for file in files:
+    #    # print(file)
+    #    shutil.move(file, folder)
+    #os.system('cd ' + folder + ' && rm -rf output/ && ls | cat -n | while read n f; do mv "$f" "$n.jpg"; done')
+
+print('LEss:', less)
