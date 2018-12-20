@@ -20,7 +20,7 @@ LEARNING_RATE = 0.01
 SAVE_PERIOD = 500
 MODEL_DIR = 'model/'  # path for saving the model
 MODEL_NAME = 'siamese_model'
-RAND_SEED = 1990  # random seed
+RAND_SEED = 0  # random seed
 tf.set_random_seed(RAND_SEED)
 
 
@@ -28,12 +28,12 @@ class Siamese(object):
 
     def __init__(self):
 
-        self.input_1 = tf.placeholder(tf.float32, [None, 224, 224, 3], name='input_1')
-        self.input_2 = tf.placeholder(tf.float32, [None, 224, 224, 3], name='input_2')
+        self.input_1 = tf.placeholder(tf.float32, [None, 784], name='input_1')
+        self.input_2 = tf.placeholder(tf.float32, [None, 784], name='input_2')
         # self.input_1 = keras.Input(shape=[None, 784], name='input_1')
         # self.input_2 = keras.Input(shape=[None, 784], name='input_2')
         # 1: paired, 0: unpaired
-        self.tf_label = tf.placeholder(tf.float32, [64], name='label')
+        self.tf_label = tf.placeholder(tf.float32, [None, ], name='label')
         self.output_1, self.output_2 = self.network_initializer()
         self.loss = self.loss_contrastive()
         self.optimizer = self.optimizer_initializer()
@@ -67,27 +67,22 @@ class Siamese(object):
 
     def network(self, input):
 
-        reshaped = tf.reshape(input, shape=[-1, 224, 224, 3])
+        reshaped = tf.reshape(input, shape=[-1, 28, 28, 1])
 
-        w1 = tf.get_variable(shape=[5, 5, 3, 32], dtype=tf.float32, name='w1',
+        w1 = tf.get_variable(shape=[5, 5, 1, 36], dtype=tf.float32, name='w1',
                              initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-        b1 = tf.get_variable(shape=[32], dtype=tf.float32, name='b1',
+        b1 = tf.get_variable(shape=[36], dtype=tf.float32, name='b1',
                              initializer=tf.constant_initializer(0.1))
 
-        w2 = tf.get_variable(shape=[4, 4, 32, 48], dtype=tf.float32, name='w2',
+        w2 = tf.get_variable(shape=[4, 4, 36, 72], dtype=tf.float32, name='w2',
                              initializer=tf.truncated_normal_initializer(mean=0, stddev=0.1))
-        b2 = tf.get_variable(shape=[48], dtype=tf.float32, name='b2',
+        b2 = tf.get_variable(shape=[72], dtype=tf.float32, name='b2',
                              initializer=tf.constant_initializer(0.1))
 
-        w3 = tf.get_variable(shape=[3, 3, 48, 64], dtype=tf.float32, name='w3',
+        w3 = tf.get_variable(shape=[3, 3, 72, 100], dtype=tf.float32, name='w3',
                              initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
-        b3 = tf.get_variable(shape=[64], dtype=tf.float32, name='b3',
+        b3 = tf.get_variable(shape=[100], dtype=tf.float32, name='b3',
                              initializer=tf.constant_initializer(0.1))
-
-        #w4 = tf.get_variable(shape=[3, 3, 64, 96], dtype=tf.float32, name='w4',
-        #                     initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
-        #b4 = tf.get_variable(shape=[96], dtype=tf.float32, name='b4',
-        #                     initializer=tf.constant_initializer(0.1))
 
         conv1 = tf.nn.relu(tf.nn.conv2d(reshaped, w1, strides=[1, 1, 1, 1], padding='VALID') + b1)
 
@@ -101,11 +96,7 @@ class Siamese(object):
 
         pool3 = tf.nn.max_pool(conv3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
 
-        # conv4 = tf.nn.relu(tf.nn.conv2d(pool3, w4, strides=[1, 1, 1, 1], padding='VALID') + b4)
-
-        # pool4 = tf.nn.max_pool(conv4, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
-
-        flatten = tf.reshape(pool3, [-1, pool3.get_shape()[1] * pool3.get_shape()[2] * 64])
+        flatten = tf.reshape(pool3, [-1, pool3.get_shape()[1]*pool3.get_shape()[2]*100])
 
         fc1 = self.fc_layer(tf_input=flatten, n_hidden_units=1024, variable_name='fc1')
         ac1 = tf.nn.relu(fc1)
@@ -113,7 +104,7 @@ class Siamese(object):
         fc2 = self.fc_layer(tf_input=ac1, n_hidden_units=512, variable_name='fc2')
         ac2 = tf.nn.relu(fc2)
 
-        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=128, variable_name='fc3')
+        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=2, variable_name='fc3')
         # ac3 = tf.nn.tanh(fc3)
 
         return fc3

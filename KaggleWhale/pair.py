@@ -12,13 +12,13 @@ class Pair(object):
         # self.image_2 = np.array(Image.open(path_image_2))
         self.label = label
 
-    def print_shapes(self):
-        print(np.shape(self.image_1), np.shape(self.image_2), np.shape(self.label))
+    #def print_shapes(self):
+    #    print(np.shape(self.image_1), np.shape(self.image_2), np.shape(self.label))
 
     def print_images(self):
         f, axarr = plt.subplots(1, 2)
-        axarr[0].imshow(self.image_1)
-        axarr[1].imshow(self.image_2)
+        axarr[0].imshow(Image.open(self.path_image_1))
+        axarr[1].imshow(Image.open(self.path_image_2))
         if self.label == 1:
             axarr[0].set_title('Same')
             axarr[1].set_title('Same')
@@ -33,3 +33,8 @@ class Pair(object):
 
     def get_label(self):
         return self.label
+
+    def get_image(self):
+        image_1 = np.array(Image.open(self.path_image_1))
+        image_2 = np.array(Image.open(self.path_image_2))
+        return image_1, image_2

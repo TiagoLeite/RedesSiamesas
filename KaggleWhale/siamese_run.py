@@ -5,11 +5,22 @@ import os
 import glob
 import random
 import numpy as np
+from PIL import Image
+from matplotlib import pyplot as plt
+from random import shuffle
 
-random.seed(1997)
+# random.seed(1997)
 
-EPISODE_MAX = 100000
-BATCH_SIZE = 128
+EPISODE_MAX = 1000000
+BATCH_SIZE = 64
+
+
+def get_batch(all_pairs, start, end):
+    input_1 = [np.array(Image.open(x.path_image_1).convert('RGB'))/255.0 for x in all_pairs[start:end]]
+    input_2 = [np.array(Image.open(x.path_image_2).convert('RGB'))/255.0 for x in all_pairs[start:end]]
+    labels = [x.label for x in all_pairs[start:end]]
+    # print(np.shape(input_1), np.shape(input_2), np.shape(labels))
+    return input_1, input_2, labels
 
 
 def get_all_pairs():
@@ -54,10 +65,10 @@ def get_all_pairs():
             par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
             folder_cont += 1
             pairs.append(par)
-            if cont_neg >= 1088:
+            if cont_neg >= 1083:
                 break
 
-        if cont_neg < 1000:
+        if cont_neg < 1083:
             for k in range(0, j):
                 cont_neg += 1
                 # if k % 100 == 0:
@@ -69,7 +80,7 @@ def get_all_pairs():
                 par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
                 folder_cont += 1
                 pairs.append(par)
-                if cont_neg >= 1000:
+                if cont_neg >= 1083:
                     break
 
         print(folder_cont, len(pairs))
@@ -79,22 +90,15 @@ def get_all_pairs():
     return pairs
 
 
-def train_model(model, dataset):
-    # Train model
+def train_model(model, all_pairs):
+
     for episode in range(EPISODE_MAX):
-        input_1, label_1 = dataset.train.next_batch(BATCH_SIZE)
-        input_2, label_2 = dataset.train.next_batch(BATCH_SIZE)
-        label = (label_1 == label_2).astype('float')
-
-        # print(label)
-
-        train_loss = model.train_model(input_1=input_1, input_2=input_2, label=label)
-
-        if episode % 100 == 0:
-            print('episode %d: train loss %.3f' % (episode, train_loss))
-
-        if episode % 10000 == 0:
-            model.save_model()
+        input_1, input_2, labels = get_batch(all_pairs, episode*BATCH_SIZE, (episode+1)*BATCH_SIZE)
+        train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
+        #if episode % 2 == 0:
+        print('episode %d: train loss %.5f' % (episode, train_loss))
+        #if episode % 10000 == 0:
+        #    model.save_model()
 
 
 def test_model(model, dataset):
@@ -104,26 +108,46 @@ def test_model(model, dataset):
 
 
 def main():
-    # Load MNIST dataset
-    # mnist = input_data.read_data_sets('MNIST_data', one_hot=False)
-    # Initialze model
-    # siamese = Siamese()
-    pairs = list()
-    # for k in range(4):
-    #    apar = Pair('aug_test/' + str((k % 2) + 1) + '.jpg', 'aug_test/' + str((k + 1) % 2 + 1) + '.jpg', k % 2)
-    #    pairs.append(apar)
-    # print(len(pairs))
+
+    siamese = Siamese()
     all_pairs = get_all_pairs()
-    print('Pairs:', len(all_pairs))
+
+    #print('Pairs:', len(all_pairs))
+    #print(all_pairs[0].print_images())
+
+    #for i in range(1, len(all_pairs)):
+    #    index = random.randrange(0, i)
+    #    all_pairs[index], all_pairs[i] = all_pairs[i], all_pairs[index]
+
+    #print('Pairs:', len(all_pairs))
+    #print(all_pairs[0].print_images())
+
+    shuffle(all_pairs)
+
+    '''for k in range(10):
+        f, axarr = plt.subplots(1, 2)
+        axarr[0].imshow(a[k])
+        axarr[1].imshow(b[k])
+        if c[k] == 1:
+            axarr[0].set_title('Same')
+            axarr[1].set_title('Same')
+        else:
+            axarr[0].set_title('Different')
+            axarr[1].set_title('Different')
+        # print(a[0] + ' | ' + b[0])
+        plt.show()'''
+
     pos = [x for x in all_pairs if x.label == 1]
-    print(len(pos))
+    print('Pos:', len(pos))
     neg = [x for x in all_pairs if x.label == 0]
-    print(len(neg))
+    print('Neg:', len(neg))
     print((len(pos)+len(neg)))
-    # for par in pairs:
+
+    # for par in all_pairs[:30]:
     #    par.print_label()
     #    par.print_images()
-    # train_model(model=siamese, dataset=mnist)
+
+    train_model(siamese, all_pairs)
     # test_model(model=siamese, dataset=mnist)
 
 
