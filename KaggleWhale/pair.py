@@ -6,8 +6,10 @@ from matplotlib import pyplot as plt
 class Pair(object):
 
     def __init__(self, path_image_1, path_image_2, label):
-        self.image_1 = np.array(Image.open(path_image_1))
-        self.image_2 = np.array(Image.open(path_image_2))
+        self.path_image_1 = path_image_1
+        self.path_image_2 = path_image_2
+        # self.image_1 = np.array(Image.open(path_image_1))
+        # self.image_2 = np.array(Image.open(path_image_2))
         self.label = label
 
     def print_shapes(self):
@@ -23,7 +25,11 @@ class Pair(object):
         else:
             axarr[0].set_title('Different')
             axarr[1].set_title('Different')
+        print(self.path_image_1 + ' | ' + self.path_image_2)
         plt.show()
 
     def print_label(self):
         print(self.label)
+
+    def get_label(self):
+        return self.label

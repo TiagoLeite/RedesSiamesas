@@ -4,6 +4,7 @@ from pair import Pair
 import os
 import glob
 import random
+import numpy as np
 
 random.seed(1997)
 
@@ -17,31 +18,65 @@ def get_all_pairs():
     pair_count = 0
     pairs = list()
     print(len(folders))
-    for folder in folders:
+    for j in range(len(folders)):
+        folder_cont = 0
+        folder = folders[j]
         cont += 1
         files = os.listdir(folder)  # dir is your directory path
         number_files = len(files)
-        print(folder, cont, number_files)
-        folders.remove(folder)
+        # print(folder, cont, number_files)
+        # folders.remove(folder)
         files = sorted(files)
-        print(files)
         for k in range(len(files)):
             file = files[k]
-            #print('Current:', file)
-            #print('Size:', len(files[k:]))
+            # print('Current:', file)
+            # print('Size:', len(files[k:]))
             pair_count = 0
-            for another_file in files[k+1:]:
+            for another_file in files[k + 1:]:
                 pair_count += 1
-                par = Pair(folder+'/'+file, folder+'/'+another_file, 1)
+                par = Pair(folder + '/' + file, folder + '/' + another_file, 1)
                 # print(file, another_file)
                 # par.print_shapes()
+                folder_cont += 1
                 pairs.append(par)
-                if pair_count > 5:
+                if pair_count > 10:
                     break
-            print(pair_count)
-        if cont >= 1:
-            break
-    print('Pairs:', len(pairs))
+        # print(len(pairs))
+        cont_neg = 0
+        for k in range(j, len(folders)):
+            cont_neg += 1
+            # if k % 1000 == 0:
+            # print('K:', k)
+            fold = folders[k]
+            if fold == folder:
+                # print(fold, folder)
+                continue
+            par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
+            folder_cont += 1
+            pairs.append(par)
+            if cont_neg >= 1088:
+                break
+
+        if cont_neg < 1000:
+            for k in range(0, j):
+                cont_neg += 1
+                # if k % 100 == 0:
+                # print('K:', k)
+                fold = folders[k]
+                if fold == folder:
+                    # print(fold, folder)
+                    continue
+                par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
+                folder_cont += 1
+                pairs.append(par)
+                if cont_neg >= 1000:
+                    break
+
+        print(folder_cont, len(pairs))
+
+        # if cont >= 1:
+        #    break
+    return pairs
 
 
 def train_model(model, dataset):
@@ -74,12 +109,17 @@ def main():
     # Initialze model
     # siamese = Siamese()
     pairs = list()
-    #for k in range(4):
+    # for k in range(4):
     #    apar = Pair('aug_test/' + str((k % 2) + 1) + '.jpg', 'aug_test/' + str((k + 1) % 2 + 1) + '.jpg', k % 2)
     #    pairs.append(apar)
     # print(len(pairs))
-    get_all_pairs()
-
+    all_pairs = get_all_pairs()
+    print('Pairs:', len(all_pairs))
+    pos = [x for x in all_pairs if x.label == 1]
+    print(len(pos))
+    neg = [x for x in all_pairs if x.label == 0]
+    print(len(neg))
+    print((len(pos)+len(neg)))
     # for par in pairs:
     #    par.print_label()
     #    par.print_images()
