@@ -23,17 +23,12 @@ for folder in folders:
     cont += 1
     list = os.listdir(folder)  # dir is your directory path
     number_files = len(list)
-    if number_files < less:
-        less = number_files
-    if number_files < 100:
-        print(folder, number_files)
-        print('\n' + str(cont) + ' \n')
-
-    #augment(folder)
-    #files = glob.glob(folder + "/output/*.jpg")
-    #for file in files:
-    #    # print(file)
-    #    shutil.move(file, folder)
-    #os.system('cd ' + folder + ' && rm -rf output/ && ls | cat -n | while read n f; do mv "$f" "$n.jpg"; done')
+    augment(folder)
+    files = glob.glob(folder + "/output/*.jpg")
+    print(cont)
+    for file in files:
+        #print(file)
+        shutil.move(file, folder)
+    os.system('cd ' + folder + ' && rm -rf output/ && ls | cat -n | while read n f; do mv "$f" "$n.jpg"; done')
 
 print('LEss:', less)
