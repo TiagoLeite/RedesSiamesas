@@ -11,7 +11,7 @@ from random import shuffle
 
 # random.seed(1997)
 
-BATCH_SIZE = 100
+BATCH_SIZE = 32
 EPOCH_SIZE = int(101445/BATCH_SIZE)
 
 
@@ -71,9 +71,9 @@ def get_all_pairs():
 
 
 def train_model(model, train_pairs, test_pairs):
-    epochs = 2
+    epochs = 1
     for epoch in range(epochs):
-        for episode in range(int(EPOCH_SIZE/4)):
+        for episode in range(int(EPOCH_SIZE)):
             input_1, input_2, labels = get_batch(train_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
             train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
 
