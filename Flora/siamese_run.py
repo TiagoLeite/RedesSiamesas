@@ -12,7 +12,7 @@ from random import shuffle
 # random.seed(1997)
 
 BATCH_SIZE = 100
-EPOCH_SIZE = int(15000 / BATCH_SIZE)
+EPOCH_SIZE = int(101445/BATCH_SIZE)
 
 
 def get_batch(all_pairs, start, end):
@@ -34,7 +34,7 @@ def get_negative_pairs(all_folders, folder, all_pairs):
         files2 = os.listdir(neg_folder)
         shuffle(files1)
         shuffle(files2)
-        for k in range(36):
+        for k in range(240):
             par = Pair(folder + '/' + files1[k], neg_folder + '/' + files2[k], 0)  # different class
             # par.print_images()
             all_pairs.append(par)
@@ -46,7 +46,7 @@ def get_positive_pairs(folder, all_pairs):
     files1 = os.listdir(folder)
     shuffle(files1)
     last_len = len(all_pairs)
-    files1 = files1[:32]
+    files1 = files1[:83]
     for file1 in files1:
         pair_count = 0
         for file2 in files1[files1.index(file1) + 1:]:
@@ -71,9 +71,9 @@ def get_all_pairs():
 
 
 def train_model(model, train_pairs, test_pairs):
-    epochs = 1
+    epochs = 2
     for epoch in range(epochs):
-        for episode in range(int(EPOCH_SIZE/2)):
+        for episode in range(int(EPOCH_SIZE/4)):
             input_1, input_2, labels = get_batch(train_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
             train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
 
@@ -101,18 +101,18 @@ def main():
 
     siamese = Siamese()
     siamese.load_model()
-
-    for k in range(30):
-        print('======= Eon %d ======== ' % k)
+    EONS = 10
+    for k in range(EONS):
+        print('======= Eon %d/%d ======== ' % (k, EONS))
         pairs_train = get_all_pairs()
         pairs_test = get_all_pairs()
         print('Pairs:', len(pairs_train))
         shuffle(pairs_train)
-        # pos = [x for x in pairs_train if x.label == 1]
-        # print('Pos:', len(pos))
-        # neg = [x for x in pairs_train if x.label == 0]
-        # print('Neg:', len(neg))
-        # print((len(pos) + len(neg)))
+        pos = [x for x in pairs_train if x.label == 1]
+        print('Pos:', len(pos))
+        neg = [x for x in pairs_train if x.label == 0]
+        print('Neg:', len(neg))
+        print((len(pos) + len(neg)))
         train_model(siamese, pairs_train, pairs_test)
         # test_model(model=siamese, dataset=mnist)
 
