@@ -73,7 +73,7 @@ def get_all_pairs():
 def train_model(model, train_pairs, test_pairs):
     epochs = 1
     for epoch in range(epochs):
-        for episode in range(int(EPOCH_SIZE/4)):
+        for episode in range(int(EPOCH_SIZE/2)):
             input_1, input_2, labels = get_batch(train_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
             train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
 
@@ -102,7 +102,7 @@ def main():
     siamese = Siamese()
     siamese.load_model()
 
-    for k in range(20):
+    for k in range(30):
         print('======= Eon %d ======== ' % k)
         pairs_train = get_all_pairs()
         pairs_test = get_all_pairs()
