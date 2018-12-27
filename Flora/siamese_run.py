@@ -75,7 +75,7 @@ def train_model(model, all_pairs):
         input_1, input_2, labels = get_batch(all_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
         train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
         # if episode % 2 == 0:
-        print('episode %d: train loss %.5f' % (episode, train_loss))
+        print('episode %d/%d: train loss %.5f' % (episode, EPISODE_MAX, train_loss))
         if episode % 10 == 9:
             print('Saving...')
             model.save_model()
