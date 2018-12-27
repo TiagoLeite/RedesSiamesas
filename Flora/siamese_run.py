@@ -39,7 +39,7 @@ def get_negative_pairs(all_folders, folder, all_pairs):
             # par.print_images()
             all_pairs.append(par)
 
-    print('NEG:', folder, len(all_pairs) - last_len)
+    #print('NEG:', folder, len(all_pairs) - last_len)
 
 
 def get_positive_pairs(folder, all_pairs):
@@ -56,7 +56,7 @@ def get_positive_pairs(folder, all_pairs):
             par = Pair(folder + '/' + file1, folder + '/' + file2, 1)  # Same class
             all_pairs.append(par)
 
-    print('POS:', folder, len(all_pairs) - last_len)
+    #print('POS:', folder, len(all_pairs) - last_len)
 
 
 def get_all_pairs():
@@ -71,7 +71,7 @@ def get_all_pairs():
 
 
 def train_model(model, train_pairs, test_pairs):
-    epochs = 5
+    epochs = 2
     for epoch in range(epochs):
         for episode in range(EPOCH_SIZE):
             input_1, input_2, labels = get_batch(train_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
@@ -102,7 +102,7 @@ def main():
     siamese = Siamese()
     siamese.load_model()
 
-    for k in range(10):
+    for k in range(20):
         print('======= Eon %d ======== ' % k)
         pairs_train = get_all_pairs()
         pairs_test = get_all_pairs()
