@@ -19,7 +19,7 @@ class Siamese(object):
         # self.input_1 = keras.Input(shape=[None, 784], name='input_1')
         # self.input_2 = keras.Input(shape=[None, 784], name='input_2')
         # 1: paired, 0: unpaired
-        self.tf_label = tf.placeholder(tf.float32, [75], name='label')
+        self.tf_label = tf.placeholder(tf.float32, [100], name='label')
         self.output_1, self.output_2 = self.network_initializer()
         self.loss = self.loss_contrastive()
         self.optimizer = self.optimizer_initializer()
