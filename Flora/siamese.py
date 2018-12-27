@@ -3,23 +3,24 @@ import os
 import keras
 
 LEARNING_RATE = 0.01
-SAVE_PERIOD = 500
+BATCH_SIZE = 30
 MODEL_DIR = 'model/'  # path for saving the model
 MODEL_NAME = 'siamese_model'
-RAND_SEED = 1990  # random seed
-tf.set_random_seed(RAND_SEED)
+
+
+# RAND_SEED = 1990  # random seed
+# tf.set_random_seed(RAND_SEED)
 
 
 class Siamese(object):
 
     def __init__(self):
-
         self.input_1 = tf.placeholder(tf.float32, [None, 224, 224, 3], name='input_1')
         self.input_2 = tf.placeholder(tf.float32, [None, 224, 224, 3], name='input_2')
         # self.input_1 = keras.Input(shape=[None, 784], name='input_1')
         # self.input_2 = keras.Input(shape=[None, 784], name='input_2')
         # 1: paired, 0: unpaired
-        self.tf_label = tf.placeholder(tf.float32, [100], name='label')
+        self.tf_label = tf.placeholder(tf.float32, [BATCH_SIZE], name='label')
         self.output_1, self.output_2 = self.network_initializer()
         self.loss = self.loss_contrastive()
         self.optimizer = self.optimizer_initializer()
@@ -51,14 +52,12 @@ class Siamese(object):
         fc = tf.nn.bias_add(tf.matmul(tf_input, W), b)
         return fc
 
-    #def mobile_net_model(self):
+    # def mobile_net_model(self):
     #
     #    input = keras.layers.Input(shape=[224, 224, 3])
     #    model = keras.applications.MobileNet(input, weights='imagenet')
 
-
     def network(self, input):
-
         reshaped = tf.reshape(input, shape=[-1, 224, 224, 3])
 
         w1 = tf.get_variable(shape=[5, 5, 3, 32], dtype=tf.float32, name='w1',
@@ -76,9 +75,9 @@ class Siamese(object):
         b3 = tf.get_variable(shape=[64], dtype=tf.float32, name='b3',
                              initializer=tf.constant_initializer(0.1))
 
-        #w4 = tf.get_variable(shape=[3, 3, 64, 96], dtype=tf.float32, name='w4',
+        # w4 = tf.get_variable(shape=[3, 3, 64, 96], dtype=tf.float32, name='w4',
         #                     initializer=tf.truncated_normal_initializer(mean=0, stddev=0.01))
-        #b4 = tf.get_variable(shape=[96], dtype=tf.float32, name='b4',
+        # b4 = tf.get_variable(shape=[96], dtype=tf.float32, name='b4',
         #                     initializer=tf.constant_initializer(0.1))
 
         conv1 = tf.nn.relu(tf.nn.conv2d(reshaped, w1, strides=[1, 1, 1, 1], padding='VALID') + b1)
@@ -158,6 +157,12 @@ class Siamese(object):
                                                  self.tf_label: label})
         return train_loss
 
+    def get_loss(self, input_1, input_2, label):
+        train_loss = self.sess.run(self.loss,
+                                   feed_dict={self.input_1: input_1, self.input_2: input_2,
+                                              self.tf_label: label})
+        return train_loss
+
     def test_model(self, input_1):
         # Test the trained model
         output = self.sess.run(self.output_1, feed_dict={self.input_1: input_1})
@@ -167,6 +172,7 @@ class Siamese(object):
         # Restore the trained model
         # assert os.path.exists(MODEL_DIR + MODEL_NAME)
         self.saver.restore(self.sess, MODEL_DIR + MODEL_NAME)
+        print('Model restored!')
 
     def save_model(self):
         # Save model routinely

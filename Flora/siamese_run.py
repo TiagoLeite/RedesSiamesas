@@ -11,8 +11,8 @@ from random import shuffle
 
 # random.seed(1997)
 
-BATCH_SIZE = 100
-EPOCH_SIZE = int(15000/BATCH_SIZE)
+BATCH_SIZE = 30
+EPOCH_SIZE = int(15000 / BATCH_SIZE)
 
 
 def get_batch(all_pairs, start, end):
@@ -26,17 +26,17 @@ def get_batch(all_pairs, start, end):
 def get_negative_pairs(all_folders, folder, all_pairs):
     files1 = os.listdir(folder)
     last_len = len(all_pairs)
-    #shuffle(all_folders)
+    # shuffle(all_folders)
     for neg_folder in all_folders:
         if neg_folder == folder:
-            #print('Skipping:', neg_folder, folder)
+            # print('Skipping:', neg_folder, folder)
             continue
         files2 = os.listdir(neg_folder)
         shuffle(files1)
         shuffle(files2)
         for k in range(36):
             par = Pair(folder + '/' + files1[k], neg_folder + '/' + files2[k], 0)  # different class
-            #par.print_images()
+            # par.print_images()
             all_pairs.append(par)
 
     print('NEG:', folder, len(all_pairs) - last_len)
@@ -70,15 +70,22 @@ def get_all_pairs():
     return pairs
 
 
-def train_model(model, all_pairs):
-    epochs = 10
+def train_model(model, train_pairs, test_pairs):
+    epochs = 5
     for epoch in range(epochs):
         for episode in range(EPOCH_SIZE):
-            input_1, input_2, labels = get_batch(all_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
+            input_1, input_2, labels = get_batch(train_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
             train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
-            # if episode % 2 == 0:
-            print('episode %d/%d epoch %d/%d: train loss %.5f' % (episode, EPOCH_SIZE, epoch,
-                                                                  epochs, train_loss))
+
+            if episode % 10 == 0:
+                print('episode %d/%d epoch %d/%d: train loss %.5f' % (episode, EPOCH_SIZE, epoch,
+                                                                      epochs, train_loss))
+            if episode % 10 == 5:
+                input_1, input_2, labels = get_batch(test_pairs, episode * BATCH_SIZE,
+                                                     (episode + 1) * BATCH_SIZE)
+                test_loss = model.get_loss(input_1=input_1, input_2=input_2, label=labels)
+                print('Test loss: %.5f' % test_loss)
+
             if episode % 10 == 9:
                 print('Saving...')
                 model.save_model()
@@ -93,22 +100,24 @@ def test_model(model, dataset):
 def main():
 
     siamese = Siamese()
-    all_pairs = get_all_pairs()
-    print('Pairs:', len(all_pairs))
-    shuffle(all_pairs)
+    siamese.load_model()
 
-    #for k in range(10):
-    #    print(all_pairs[k].print_images())
-
-    pos = [x for x in all_pairs if x.label == 1]
-    print('Pos:', len(pos))
-    neg = [x for x in all_pairs if x.label == 0]
-    print('Neg:', len(neg))
-    print((len(pos) + len(neg)))
-
-    train_model(siamese, all_pairs)
-    #test_model(model=siamese, dataset=mnist)
+    for k in range(10):
+        print('======= Eon %d ======== ' % k)
+        pairs_train = get_all_pairs()
+        pairs_test = get_all_pairs()
+        print('Pairs:', len(pairs_train))
+        shuffle(pairs_train)
+        # pos = [x for x in pairs_train if x.label == 1]
+        # print('Pos:', len(pos))
+        # neg = [x for x in pairs_train if x.label == 0]
+        # print('Neg:', len(neg))
+        # print((len(pos) + len(neg)))
+        train_model(siamese, pairs_train, pairs_test)
+        # test_model(model=siamese, dataset=mnist)
 
 
 if __name__ == '__main__':
     main()
+
+# https://drive.google.com/open?id=1sxjgiwFueru3Q5UclnHQx7tD6sTtkYDI
