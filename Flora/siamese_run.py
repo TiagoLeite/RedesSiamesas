@@ -71,7 +71,7 @@ def get_all_pairs():
 
 
 def train_model(model, all_pairs):
-    for episode in range(EPISODE_MAX):
+    for episode in range(EPISODE_MAX-1):
         input_1, input_2, labels = get_batch(all_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
         train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
         # if episode % 2 == 0:
