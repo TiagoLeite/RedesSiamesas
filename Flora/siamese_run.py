@@ -11,8 +11,8 @@ from random import shuffle
 
 # random.seed(1997)
 
-BATCH_SIZE = 75
-EPISODE_MAX = 3*int(15000/BATCH_SIZE)
+BATCH_SIZE = 100
+EPISODE_MAX = 5*int(15000/BATCH_SIZE)
 
 
 def get_batch(all_pairs, start, end):

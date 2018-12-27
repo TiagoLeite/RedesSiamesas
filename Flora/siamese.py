@@ -1,17 +1,3 @@
-'''
-Siamese Network Implementation Practice
-Lei Mao
-10/13/2017
-University of Chicago
-'''
-
-'''
-References
-TesorFlow Sharing Variables
-https://www.tensorflow.org/versions/r0.12/how_tos/variable_scope/
-Simple Siamese Network
-https://github.com/ywpkwon/siamese_tf_mnist/blob/master/inference.py
-'''
 import tensorflow as tf
 import os
 import keras
@@ -64,6 +50,12 @@ class Siamese(object):
         )
         fc = tf.nn.bias_add(tf.matmul(tf_input, W), b)
         return fc
+
+    #def mobile_net_model(self):
+    #
+    #    input = keras.layers.Input(shape=[224, 224, 3])
+    #    model = keras.applications.MobileNet(input, weights='imagenet')
+
 
     def network(self, input):
 
