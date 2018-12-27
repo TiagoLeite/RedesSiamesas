@@ -12,7 +12,7 @@ from random import shuffle
 # random.seed(1997)
 
 BATCH_SIZE = 100
-EPISODE_MAX = 5*int(15000/BATCH_SIZE)
+EPOCH_SIZE = int(15000/BATCH_SIZE)
 
 
 def get_batch(all_pairs, start, end):
@@ -71,14 +71,17 @@ def get_all_pairs():
 
 
 def train_model(model, all_pairs):
-    for episode in range(EPISODE_MAX-1):
-        input_1, input_2, labels = get_batch(all_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
-        train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
-        # if episode % 2 == 0:
-        print('episode %d/%d: train loss %.5f' % (episode, EPISODE_MAX, train_loss))
-        if episode % 10 == 9:
-            print('Saving...')
-            model.save_model()
+    epochs = 10
+    for epoch in range(epochs):
+        for episode in range(EPOCH_SIZE):
+            input_1, input_2, labels = get_batch(all_pairs, episode * BATCH_SIZE, (episode + 1) * BATCH_SIZE)
+            train_loss = model.train_model(input_1=input_1, input_2=input_2, label=labels)
+            # if episode % 2 == 0:
+            print('episode %d/%d epoch %d/%d: train loss %.5f' % (episode, EPOCH_SIZE, epoch,
+                                                                  epochs, train_loss))
+            if episode % 10 == 9:
+                print('Saving...')
+                model.save_model()
 
 
 def test_model(model, dataset):
