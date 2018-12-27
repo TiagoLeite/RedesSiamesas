@@ -11,7 +11,7 @@ from random import shuffle
 
 # random.seed(1997)
 
-BATCH_SIZE = 32
+BATCH_SIZE = 100
 EPOCH_SIZE = int(101445/BATCH_SIZE)
 
 
