@@ -19,7 +19,7 @@ def get_batch(all_pairs, start, end):
     input_1 = [np.array(Image.open(x.path_image_1).convert('RGB'))/255.0 for x in all_pairs[start:end]]
     input_2 = [np.array(Image.open(x.path_image_2).convert('RGB'))/255.0 for x in all_pairs[start:end]]
     labels = [x.label for x in all_pairs[start:end]]
-    # print(np.shape(input_1), np.shape(input_2), np.shape(labels))
+    print(np.shape(input_1), np.shape(input_2), np.shape(labels))
     return input_1, input_2, labels
 
 
@@ -50,7 +50,7 @@ def get_all_pairs():
                 # par.print_shapes()
                 folder_cont += 1
                 pairs.append(par)
-                if pair_count > 10:
+                if pair_count > 3:
                     break
         # print(len(pairs))
         cont_neg = 0
@@ -65,10 +65,10 @@ def get_all_pairs():
             par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
             folder_cont += 1
             pairs.append(par)
-            if cont_neg >= 1083:
+            if cont_neg >= 500:
                 break
 
-        if cont_neg < 1083:
+        if cont_neg < 500:
             for k in range(0, j):
                 cont_neg += 1
                 # if k % 100 == 0:
@@ -80,7 +80,7 @@ def get_all_pairs():
                 par = Pair(folder + '/1.jpg', fold + '/1.jpg', 0)
                 folder_cont += 1
                 pairs.append(par)
-                if cont_neg >= 1083:
+                if cont_neg >= 500:
                     break
 
         print(folder_cont, len(pairs))

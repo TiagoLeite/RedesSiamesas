@@ -101,10 +101,10 @@ class Siamese(object):
         fc1 = self.fc_layer(tf_input=flatten, n_hidden_units=1024, variable_name='fc1')
         ac1 = tf.nn.relu(fc1)
 
-        fc2 = self.fc_layer(tf_input=ac1, n_hidden_units=512, variable_name='fc2')
+        fc2 = self.fc_layer(tf_input=ac1, n_hidden_units=128, variable_name='fc2')
         ac2 = tf.nn.relu(fc2)
 
-        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=32, variable_name='fc3')
+        fc3 = self.fc_layer(tf_input=ac2, n_hidden_units=2, variable_name='fc3')
         # ac3 = tf.nn.tanh(fc3)
 
         return fc3
