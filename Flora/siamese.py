@@ -3,7 +3,7 @@ import os
 import keras
 
 LEARNING_RATE = 0.001
-BATCH_SIZE = 100
+BATCH_SIZE = 32
 MODEL_DIR = 'model/'  # path for saving the model
 MODEL_NAME = 'siamese_model'
 
