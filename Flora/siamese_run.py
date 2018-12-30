@@ -119,5 +119,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# https://drive.google.com/open?id=1sxjgiwFueru3Q5UclnHQx7tD6sTtkYDI
